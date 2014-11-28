@@ -91,7 +91,23 @@ coreos:
         [Service]
         Type=oneshot
         RemainAfterExit=yes
-        ExecStart=/bin/sh -c "for unit in <%= @service_templates %>; do /usr/bin/fleetctl submit /etc/systemd/unit-files/$unit; done"
+        ExecStart=/bin/sh -c "for unit in <%= @service_templates.join(" ") %>; do /usr/bin/fleetctl submit /etc/systemd/unit-files/$unit; done"
+    - name: akka-cluster-nodes.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        After=network-online.target
+        After=etcd.service
+        Description=Creates Akka Cluster Configuration Directory
+        Requires=network-online.target
+        Requires=etcd.service
+
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStartPre=-/usr/bin/etcdctl mkdir /akka.cluster.nodes
+        ExecStart=/bin/echo Created /akka.cluster.nodes etcd directory
 
 write_files:
   # File holding Docker login information
@@ -112,7 +128,7 @@ write_files:
 
   # We set core-01 as our Weave networking peer - FIXME: are there any more resilient strategies here?
   # Note: no DNS is running, so IP addresses are essential here for interacting with Weave DNS
-<% @instances.each do |i| %>
+<% @instances.map { |n| n.to_i }.each do |i| %>
   - path: /etc/weave.<%= "core-%02d" % i %>.env
     permissions: 0644
     owner: root
@@ -126,7 +142,7 @@ write_files:
     permissions: 0644
     owner: root
     content: |
-    <% ERB.new(File.read("unit-files/#{name}.erb")).result(binding).split('\n').each do |line| %>
+<% ERB.new(File.read("unit-files/#{name}.erb"), 0, "<>", '_service').result(binding).split("\n").select { |l| !l.empty? }.each do |line| %>
       <%= line %>
-    <% end %>
+<% end %>
 <% end %>

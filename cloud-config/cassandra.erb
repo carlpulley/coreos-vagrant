@@ -1,4 +1,4 @@
-<%= ERB.new(File.read("cloud-config/default.erb")).result(binding) %>
+<%= ERB.new(File.read("cloud-config/default.erb"), 0, "<>", '_default').result(binding) %>
 
 # Cloud config data for creating Cassandra compute nodes
 
@@ -18,7 +18,7 @@ coreos:
         RemainAfterExit=yes
         
         # Download our Akka container image from the Docker repository
-        ExecStartPre=/usr/bin/docker pull spotify/cassandra
+        ExecStartPre=/usr/bin/docker pull <%= @docker[:cassandra] %>
         ExecStart=/bin/echo Docker Cassandra Image Installed
         
         [X-Fleet]

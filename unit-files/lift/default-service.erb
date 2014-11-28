@@ -12,9 +12,6 @@ User=core
 TimeoutStartSec=0
 KillMode=none
 
-Environment="IP_ADDRESS=<%= @ip_address %>"
-Environment="IMAGE=<%= @image %>"
-
 # Ensure our etcd registry is present
 ExecStartPre=-/usr/bin/etcdctl mkdir /%p
 
@@ -24,12 +21,12 @@ ExecStartPre=-/usr/bin/docker rm %p-%i
 
 # Start the docker container with weave networking (we pass in the etcd URL via the environment)
 # NOTE: we need to use an IP address here as Akka will otherwise map the DNS name to the wrong NIC address!
-ExecStartPre=/usr/bin/sudo /opt/bin/weave run $IP_ADDRESS/16 --name %p-%i -t -i -h %p-%i.weave.local $IMAGE
-ExecStartPre=/usr/bin/etcdctl set /%p/$IP_ADDRESS %p-%i
+ExecStartPre=/usr/bin/etcdctl set /%p/<%= @ip_address %> %p-%i
+ExecStartPre=/usr/bin/sudo /opt/bin/weave run <%= @ip_address %>/16 --name %p-%i -t -i -h %p-%i.weave.local <%= @image %>
 ExecStart=/usr/bin/docker attach %p-%i
 
 # When stopped, stop the docker container and deregister
-ExecStopPost=-/usr/bin/etcdctl rm /%p/$IP_ADDRESS
+ExecStopPost=-/usr/bin/etcdctl rm /%p/<%= @ip_address %>
 ExecStop=/usr/bin/docker stop %p-%i
 
 [X-Fleet]

@@ -1,8 +1,8 @@
 <%
-  @image          = "com.eigengo/lift-profile"
+  @image          = @docker[:profile]
   @description    = "Lift Microservice: Profile"
   @ip_address     = "10.42.5.%i"
   @affinity_rules = "MachineMetadata=type=lift"
 %>
 
-<%= ERB.new(File.read("unit-files/lift/lift-akka.erb")).result(binding) %>
+<%= ERB.new(File.read("unit-files/lift/default-akka.erb"), 0, "<>", '_unit').result(binding) %>

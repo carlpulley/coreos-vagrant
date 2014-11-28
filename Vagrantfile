@@ -33,15 +33,15 @@ if File.exist?(CONFIG)
   require CONFIG
 end
 
-@instances = (ENV['INSTANCE'] || $instances).split(",").map { |i| Integer(i.strip) }
+@instances = (ENV['INSTANCE'] || @instances).split(",").map { |i| Integer(i.strip) }
 
 if @instances.empty?
-  puts "ERROR: config.rb has an empty $instances array and no INSTANCE environment variable has been specified - these should be a comma separated string of positive numbers (values should be in the range 1-253)"
+  puts "ERROR: config.rb has an empty @instances array and no INSTANCE environment variable has been specified - these should be a comma separated string of positive numbers (values should be in the range 1-253)"
   exit
 end
 
 template = File.join(File.dirname(__FILE__), "cloud-config/#{user_data}.erb")
-File.open(CLOUD_CONFIG_PATH, 'w') { |fd| fd.write(ERB.new(File.read(template)).result(binding)) }
+File.open(CLOUD_CONFIG_PATH, 'w') { |fd| fd.write(ERB.new(File.read(template), 0, "<>", "_config").result(binding)) }
 
 Vagrant.configure("2") do |config|
   config.vm.box = "coreos-%s" % $update_channel
@@ -64,7 +64,7 @@ Vagrant.configure("2") do |config|
     config.vbguest.auto_update = false
   end
 
-  $instances.each do |i|
+  @instances.each do |i|
     config.vm.define vm_name = "core-%02d" % i do |config|
       config.vm.hostname = vm_name
 

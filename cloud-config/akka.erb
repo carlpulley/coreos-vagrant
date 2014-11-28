@@ -1,4 +1,4 @@
-<%= ERB.new(File.read("cloud-config/default.erb")).result(binding) %>
+<%= ERB.new(File.read("cloud-config/default.erb"), 0, "<>", '_default').result(binding) %>
 
 # Cloud config data for creating Akka compute nodes (no Weave DNS service is launched here!)
 #   - downloads application Docker image
@@ -29,20 +29,3 @@ coreos:
         [X-Fleet]
         # Only download on akka deployment nodes
         MachineMetadata=type=akka
-
-    - name: akka-cluster-nodes.service
-      command: start
-      enable: true
-      content: |
-        [Unit]
-        After=network-online.target
-        After=etcd.service
-        Description=Creates Akka Cluster Configuration Directory
-        Requires=network-online.target
-        Requires=etcd.service
-
-        [Service]
-        Type=oneshot
-        RemainAfterExit=yes
-        ExecStartPre=-/usr/bin/etcdctl mkdir /akka.cluster.nodes
-        ExecStart=/bin/echo Created /akka.cluster.nodes etcd directory
