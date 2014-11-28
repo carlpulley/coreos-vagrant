@@ -1,0 +1,8 @@
+<%
+  @image          = "com.eigengo/lift-exercise"
+  @description    = "Lift Microservice: Exercise"
+  @ip_address     = "10.42.1.%i"
+  @affinity_rules = "MachineMetadata=type=lift"
+%>
+
+<%= ERB.new(File.read("unit-files/lift/lift-akka.erb")).result(binding) %>
