@@ -8,7 +8,7 @@ Basic setup:
 
 Sanity checking compute nodes:
 * SSH into the `core-01` compute node:
-  * `vagrant ssh core-01 -- -A`
+  * `vagrant ssh core-01 -- -A` (you will need to ensure Vagrant SSH keys are setup)
 * check which compute nodes are present (along with their metadata tags):
   * `fleetctl list-machines`
 * check that Fleet service scripts have been installed:
@@ -39,5 +39,4 @@ Checking of Akka cluster nodes:
   * `docker logs exercise-1`
 
 **Current Issues:** 
-* clusters are currently not forming - need to investigate further here!
 * need to fix race issue wrt settings of service keys such as /cassandra (Akka cluster code needs to potentially wait until key values are present here)
