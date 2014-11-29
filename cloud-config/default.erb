@@ -77,6 +77,39 @@ coreos:
         SuccessExitStatus=2
 
         ExecStop=/opt/bin/weave stop
+    - name: install-weave-dns.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        After=network-online.target
+        After=docker.service
+        Before=weave-dns.service
+        Description=Install Weave DNS
+        Documentation=http://zettio.github.io/weave/
+        Requires=network-online.target
+        Requires=docker.service
+ 
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStartPre=/usr/bin/docker pull zettio/weavedns:latest
+        ExecStart=/bin/echo Weave DNS Installed
+    - name: weave-dns.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        After=install-weave-dns.service
+        Description=Weave DNS
+        Documentation=http://zettio.github.io/weave/
+        Requires=docker.service
+        Requires=weave.service
+        Requires=install-weave-dns.service
+ 
+        [Service]
+        ExecStartPre=/opt/bin/weave launch-dns 10.42.254.254/16
+        ExecStart=/usr/bin/docker logs -f weavedns
     - name: unit-file.service
       command: start
       enable: true

@@ -30,7 +30,7 @@ ExecStartPre=-/usr/bin/docker rm %p-%i
 # NOTE: we need to use an IP address here as Akka will otherwise map the DNS name to the wrong NIC address!
 ExecStartPre=/bin/sh -c '\
   CASSANDRA=`/usr/bin/etcdctl ls /cassandra`; \
-  /usr/bin/sudo /opt/bin/weave run <%= @ip_address %>/16 --name %p-%i -t -i -h %p-%i.weave.local \
+  /usr/bin/sudo /opt/bin/weave run <%= @ip_address %>/16 --name %p-%i -h %p-%i.weave.local \
     -e "APP_ADDR=<%= @ip_address %>" \
     -e "ETCD_URL=http://${COREOS_PRIVATE_IPV4}:4001" \
     -e "JOURNAL=${CASSANDRA}" \

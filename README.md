@@ -34,5 +34,10 @@ Checking of Akka cluster nodes:
 * check that services have been launched:
   * `fleetctl list-units`
   * `fleetctl list-unit-files`
+* view Akka cluster logging for a container (e.g. exercise):
+  * `fleetctl ssh exercise@1.service`
+  * `docker logs exercise-1`
 
-**FIXME:** currently, clusters are not forming because Akka applications are not booting - need to investigate further!
+**Current Issues:** 
+* clusters are currently not forming - need to investigate further here!
+* need to fix race issue wrt settings of service keys such as /cassandra (Akka cluster code needs to potentially wait until key values are present here)
