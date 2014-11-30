@@ -2,9 +2,9 @@ Basic setup:
 * first generate a new discovery token (and add it to `config.rb`):
   * `curl https://discovery.etcd.io/new`
 * launch two Lift nodes:
-  * `INSTANCE=1,2 CLOUD_CONFIG=lift-cluster METADATA="type=lift" vagrant up`
+  * `INSTANCE=1,2 CLOUD_CONFIG=lift/akka METADATA="type=lift" vagrant up`
 * launch a Cassandra node:
-  * `INSTANCE=3 CLOUD_CONFIG=cassandra METADATA="type=cassandra" vagrant up`
+  * `INSTANCE=3 CLOUD_CONFIG=lift/cassandra METADATA="type=cassandra" vagrant up`
 
 Sanity checking compute nodes:
 * SSH into the `core-01` compute node:
@@ -38,5 +38,11 @@ Checking of Akka cluster nodes:
   * `fleetctl ssh exercise@1.service`
   * `docker logs exercise-1`
 
-**Current Issues:** 
-* need to fix race issue wrt settings of service keys such as /cassandra (Akka cluster code needs to potentially wait until key values are present here)
+Cluster formation:
+* wait until cluster actor systems have registered:
+  * `etcdctl ls /akka.cluster.nodes` should return at least one member (e.g. /akka.cluster.nodes/10.42.0.1:45678)
+* specify an initial seed node (e.g. 10.42.0.1:45678) and form a cluster:
+  * `fleetctl start seed@10.42.0.1:45678.service`
+* verify cluster formation:
+  * `fleetctl ssh exercise@1.service`
+  * `docker logs exercise-1`
