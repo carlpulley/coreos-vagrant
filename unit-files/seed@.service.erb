@@ -10,4 +10,4 @@ TimeoutSec=0
 
 # Ensure seed node exists
 ExecStartPre=/usr/bin/etcdctl get /akka.cluster.nodes/%i
-ExecStart=/usr/bin/etcdctl set /akka.cluster.nodes/%i MemberUp
+ExecStart=/usr/bin/etcdctl set /akka.cluster.nodes/%i Up

@@ -23,7 +23,7 @@ coreos:
         
         # Login and download our Akka container image from the Docker repository
         ExecStartPre=/usr/bin/docker login -u "${USERNAME}" -p "${PASSWORD}" -e "${EMAIL}"
-        ExecStartPre=/usr/bin/docker pull carlpulley/coreos-application
+        ExecStartPre=/usr/bin/docker pull <%= @docker[:app] %>
         ExecStart=/bin/echo Docker Image Installed
         
         [X-Fleet]

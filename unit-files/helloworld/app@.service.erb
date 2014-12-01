@@ -28,13 +28,12 @@ ExecStartPre=/usr/bin/sudo /opt/bin/weave run 10.42.42.%i/16 --name %p-%i -h %p-
   -e "ROLES=${ROLES}" \
   -e "APP_ADDR=10.42.42.%i" \
   -e "ETCD_URL=http://${COREOS_PRIVATE_IPV4}:4001" \
-  carlpulley/coreos-application:v0.1.0-SNAPSHOT
+  <%= @docker[:app] %>
 ExecStart=/usr/bin/docker attach %p-%i
 
 # When stopped, stop the docker container
 ExecStop=/usr/bin/docker stop %p-%i
 
 [X-Fleet]
-# Don't run two Akka cluster applications on the same host
+# Only run cluster nodes on Akka equipped compute nodes
 MachineMetadata=type=akka
-Conflicts=%p@*.service
