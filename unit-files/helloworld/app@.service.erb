@@ -16,7 +16,6 @@ KillMode=none
 
 # Read the local environment (needed to to get COREOS_PRIVATE_IPV4)
 EnvironmentFile=/etc/environment
-EnvironmentFile=-/etc/%p-%i.env
 
 # Remove old docker containers with the same name if they exist
 ExecStartPre=-/usr/bin/docker kill %p-%i
@@ -24,9 +23,8 @@ ExecStartPre=-/usr/bin/docker rm %p-%i
 
 # Start the docker container with weave networking (we pass in the etcd URL via the environment)
 # NOTE: we need to use an IP address here as Akka will otherwise map the DNS name to the wrong NIC address!
-ExecStartPre=/usr/bin/sudo /opt/bin/weave run 10.42.42.%i/16 --name %p-%i -h %p-%i.weave.local \
-  -e "ROLES=${ROLES}" \
-  -e "APP_ADDR=10.42.42.%i" \
+ExecStartPre=/usr/bin/sudo /opt/bin/weave run 10.42.0.%i/16 --name %p-%i -h %p-%i.weave.local \
+  -e "APP_ADDR=10.42.0.%i" \
   -e "ETCD_URL=http://${COREOS_PRIVATE_IPV4}:4001" \
   <%= @docker[:app] %>
 ExecStart=/usr/bin/docker attach %p-%i

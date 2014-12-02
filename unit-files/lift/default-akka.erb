@@ -3,9 +3,6 @@ After=install-lift-%p.service
 After=akka-cluster-nodes.service
 After=docker.service
 After=weave.service
-After=cassandra@*.service
-BindsTo=cassandra@*.service
-Requires=cassandra@*.service
 Description=<%= @description %>
 Requires=install-lift-%p.service
 Requires=akka-cluster-nodes.service
@@ -29,14 +26,10 @@ ExecStartPre=-/usr/bin/docker rm %p-%i
 
 # Start the docker container with weave networking (we pass in the etcd URL via the environment)
 # NOTE: we need to use an IP address here as Akka will otherwise map the DNS name to the wrong NIC address!
-ExecStartPre=/bin/sh -c '\
-  CASSANDRA=`/usr/bin/etcdctl ls /cassandra`; \
-  /usr/bin/sudo /opt/bin/weave run <%= @ip_address %>/16 --name %p-%i -h %p-%i.weave.local \
+ExecStartPre=/usr/bin/sudo /opt/bin/weave run <%= @ip_address %>/16 --name %p-%i -h %p-%i.weave.local \
     -e "APP_ADDR=<%= @ip_address %>" \
     -e "ETCD_URL=http://${COREOS_PRIVATE_IPV4}:4001" \
-    -e "JOURNAL=${CASSANDRA}" \
-    -e "SNAPSHOT=${CASSANDRA}" \
-    <%= @image %> '
+    <%= @image %>
 ExecStart=/usr/bin/docker attach %p-%i
 
 # When stopped, stop the docker container

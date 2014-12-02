@@ -11,7 +11,7 @@ if ENV['CLOUD_CONFIG'].nil?
 end
 
 if ENV['METADATA'].nil?
-  puts "WARNING: no METADATA environment variable has been specified"
+  puts "WARNING: no METADATA environment variable has been specified - setting it to be an empty string"
 end
 
 @metadata = ENV['METADATA'] || ""
