@@ -7,7 +7,7 @@ coreos:
     # If you use the discovery etcd server, use:
     discovery: https://discovery.etcd.io/<%= @token %>
     # If you run your own etcd discovery server locally, use (replace IP address with your own!):
-    #discovery: http://192.168.101.135:4001/v2/_etcd/registry/<%= @token %>
+    #discovery: http://192.168.101.135:4001/v2/keys/_etcd/registry/<%= @token %>
     addr: $public_ipv4:4001
     peer-addr: $public_ipv4:7001
   fleet:
