@@ -1,6 +1,7 @@
 <%
   @image          = @docker[:notification]
   @description    = "Lift Microservice: Notification"
+  @roles          = "notification"
   @ip_address     = "10.42.4.%i"
   @affinity_rules = "MachineMetadata=type=lift"
 %>
