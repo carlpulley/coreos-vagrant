@@ -31,7 +31,7 @@ coreos:
         
         [X-Fleet]
         # Only download on Lift deployment nodes
-        MachineMetadata=type=lift
+        MachineMetadata=lift=true
 
     - name: install-lift-exercise.service
       command: start
@@ -54,7 +54,7 @@ coreos:
         
         [X-Fleet]
         # Only download on Lift deployment nodes
-        MachineMetadata=type=lift
+        MachineMetadata=lift=true
 
     - name: install-lift-notification.service
       command: start
@@ -77,4 +77,4 @@ coreos:
         
         [X-Fleet]
         # Only download on Lift deployment nodes
-        MachineMetadata=type=lift
+        MachineMetadata=lift=true

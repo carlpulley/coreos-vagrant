@@ -33,11 +33,30 @@ if File.exist?(CONFIG)
   require CONFIG
 end
 
-@instances = (ENV['INSTANCE'] || @instances).split(",").map { |i| Integer(i.strip) }
+# CoreOS cluster numbers that Vagrant should create - these should be a comma separated string of positive numbers (values should be in the range 1-253)
+@instances = (ENV['INSTANCE'] || `VBoxManage list vms`.split("\n").select { |m| /_core-(\d\d)_/ =~ m }.map { |m| /_core-(\d\d)_/.match(m)[1].to_i }.join(",")).split(",").map { |i| Integer(i.strip) }
 
 if @instances.empty?
   puts "ERROR: config.rb has an empty @instances array and no INSTANCE environment variable has been specified - these should be a comma separated string of positive numbers (values should be in the range 1-253)"
   exit
+end
+
+# Generate a new UUID token if this is the first time that we have used 'up' with this Vagrant box
+if ARGV[0].eql?('up') && (!File.exist?('.token') || `VBoxManage list vms`.split("\n").select { |m| /_core-(\d\d)_/ =~ m }.empty?)
+  require 'open-uri'
+ 
+  @token = open('https://discovery.etcd.io/new').read.strip
+  while /\/([a-f0-9]{32})$/ !~ @token do
+    @token = open('https://discovery.etcd.io/new').read.strip
+  end
+  @token = /\/([a-f0-9]{32})$/.match(@token)[1]
+  puts "Generated new discovery token: #{@token}"
+  # and ensure that the token is saved for any future invocations
+  File.open('.token', 'w') { |file| file.write(@token) }
+elsif File.exist?('.token')
+  # Read a previously saved token
+  @token = File.read('.token').strip
+  puts "Using existing discovery token: #{@token}"
 end
 
 template = File.join(File.dirname(__FILE__), "cloud-config/#{user_data}.erb")

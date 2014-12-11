@@ -1,40 +1,9 @@
-[Unit]
-After=install-%p.service
-After=akka-cluster-nodes.service
-After=docker.service
-After=weave.service
-After=cassandra@*.service
-Description=CoreOS Akka Cluster Application
-Requires=install-%p.service
-Requires=akka-cluster-nodes.service
-Requires=docker.service
-Requires=weave.service
-Requires=cassandra@*.service
+<%
+  @image          = @docker[:app]
+  @description    = "CoreOS Akka Cluster Application: HelloWorld"
+  @roles          = "hello-world"
+  @ip_address     = "10.42.1.%i"
+  @affinity_rules = "MachineMetadata=akka=true"
+%>
 
-[Service]
-User=core
-TimeoutStartSec=0
-KillMode=none
-
-# Read the local environment (needed to to get COREOS_PRIVATE_IPV4)
-EnvironmentFile=/etc/environment
-
-# Remove old docker containers with the same name if they exist
-ExecStartPre=-/usr/bin/docker kill %p-%i
-ExecStartPre=-/usr/bin/docker rm %p-%i
-
-# Start the docker container with weave networking (we pass in the etcd URL via the environment)
-# NOTE: we need to use an IP address here as Akka will otherwise map the DNS name to the wrong NIC address!
-ExecStartPre=/bin/sh -c '/usr/bin/sudo /opt/bin/weave run 10.42.0.%i/16 --name %p-%i -h %p-%i.weave.local \
-  -e "APP_ADDR=10.42.0.%i" \
-  -e "ETCD_URL=http://${COREOS_PRIVATE_IPV4}:4001" \
-  -e CASSANDRA=$(/usr/bin/etcdctl ls /cassandra | /usr/bin/sed "s!^/cassandra/!!") \
-  <%= @docker[:app] %>'
-ExecStart=/usr/bin/docker attach %p-%i
-
-# When stopped, stop the docker container
-ExecStop=/usr/bin/docker stop %p-%i
-
-[X-Fleet]
-# Only run cluster nodes on Akka equipped compute nodes
-MachineMetadata=type=akka
+<%= ERB.new(File.read("unit-files/default-akka.erb"), 0, "<>", '_unit').result(binding) %>

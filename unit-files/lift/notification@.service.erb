@@ -3,7 +3,7 @@
   @description    = "Lift Microservice: Notification"
   @roles          = "notification"
   @ip_address     = "10.42.4.%i"
-  @affinity_rules = "MachineMetadata=type=lift"
+  @affinity_rules = "MachineMetadata=lift=true"
 %>
 
-<%= ERB.new(File.read("unit-files/lift/default-akka.erb"), 0, "<>", '_unit').result(binding) %>
+<%= ERB.new(File.read("unit-files/default-akka.erb"), 0, "<>", '_unit').result(binding) %>
