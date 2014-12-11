@@ -22,7 +22,6 @@ CLOUD_CONFIG_PATH = "/tmp/vagrantfile-user-data"
 CONFIG = File.join(File.dirname(__FILE__), "config.rb")
 
 # Defaults for config options defined in CONFIG
-$num_instances = 1
 $update_channel = "alpha"
 $enable_serial_logging = false
 $vb_gui = false
@@ -34,7 +33,7 @@ if File.exist?(CONFIG)
 end
 
 # CoreOS cluster numbers that Vagrant should create - these should be a comma separated string of positive numbers (values should be in the range 1-253)
-@instances = (ENV['INSTANCE'] || `VBoxManage list vms`.split("\n").select { |m| /_core-(\d\d)_/ =~ m }.map { |m| /_core-(\d\d)_/.match(m)[1].to_i }.join(",")).split(",").map { |i| Integer(i.strip) }
+@instances = (ENV['INSTANCE'] || `VBoxManage list vms`.split("\n").select { |m| /_core-(\d\d)_\d+_\d+/ =~ m }.map { |m| /_core-(\d\d)_\d+_\d+/.match(m)[1].to_i }.join(",")).split(",").map { |i| Integer(i.strip) }
 
 if @instances.empty?
   puts "ERROR: config.rb has an empty @instances array and no INSTANCE environment variable has been specified - these should be a comma separated string of positive numbers (values should be in the range 1-253)"
@@ -42,7 +41,7 @@ if @instances.empty?
 end
 
 # Generate a new UUID token if this is the first time that we have used 'up' with this Vagrant box
-if ARGV[0].eql?('up') && (!File.exist?('.token') || `VBoxManage list vms`.split("\n").select { |m| /_core-(\d\d)_/ =~ m }.empty?)
+if ARGV[0].eql?('up') && (!File.exist?('.token') || `VBoxManage list vms`.split("\n").select { |m| /_core-(\d\d)_\d+_\d+/ =~ m }.empty?)
   require 'open-uri'
  
   @token = open('https://discovery.etcd.io/new').read.strip

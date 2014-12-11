@@ -3,13 +3,13 @@ After=install-%p.service
 After=akka-cluster-nodes.service
 After=docker.service
 After=weave.service
-After=cassandra.service
+After=cassandra@1.service
 Description=<%= @description %>
 Requires=install-%p.service
 Requires=akka-cluster-nodes.service
 Requires=docker.service
 Requires=weave.service
-Requires=cassandra.service
+Requires=cassandra@1.service
 
 [Service]
 User=core

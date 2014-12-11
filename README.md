@@ -1,6 +1,4 @@
 Basic setup:
-* first generate a new discovery token (and add it to `config.rb`):
-  * `curl https://discovery.etcd.io/new`
 * launch two Lift nodes:
   * `INSTANCE=1,2 CLOUD_CONFIG=lift/akka METADATA="lift=true" vagrant up`
 * launch a Cassandra node:
