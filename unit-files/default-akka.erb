@@ -24,6 +24,9 @@ ExecStartPre=-/usr/bin/etcdctl mkdir /<%= @service_discovery_key %>
 ExecStartPre=-/usr/bin/docker kill %p-%i
 ExecStartPre=-/usr/bin/docker rm %p-%i
 
+# Wait until Cassandra is up
+ExecStartPre=/bin/sh -c 'COUNT=$(/usr/bin/etcdctl ls /<%= @service_discovery[:cassandra] %> | /usr/bin/wc -l); while [ COUNT -eq 0 ]; do sleep 1; COUNT=$(/usr/bin/etcdctl ls /<%= @service_discovery[:cassandra] %> | /usr/bin/wc -l); done'
+
 # Start the docker container with weave networking (we pass in the etcd URL via the environment)
 # NOTE: we need to use an IP address here as Akka will otherwise map the DNS name to the wrong NIC address!
 ExecStartPre=/usr/bin/sh -c '/usr/bin/sudo /opt/bin/weave run <%= @ip_address %>/16 --name %p-%i -h %p-%i.weave.local \
