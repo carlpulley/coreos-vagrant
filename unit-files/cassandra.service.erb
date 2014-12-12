@@ -1,0 +1,9 @@
+<%
+  @image                 = @docker[:cassandra]
+  @description           = "Supporting Service: Cassandra"
+  @ip_address            = "10.42.0.1"
+  @service_discovery_key = @service_discovery[:cassandra]
+  @affinity_rules        = "MachineMetadata=cassandra=true"
+%>
+
+<%= ERB.new(File.read("unit-files/default-service.erb"), 0, "<>", "_unit").result(binding) %>

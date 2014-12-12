@@ -128,22 +128,6 @@ coreos:
         Type=oneshot
         RemainAfterExit=yes
         ExecStart=/bin/sh -c "for unit in <%= @service_templates.join(" ") %>; do /usr/bin/fleetctl submit /etc/systemd/unit-files/$unit; done"
-    - name: akka-cluster-nodes.service
-      command: start
-      enable: true
-      content: |
-        [Unit]
-        After=network-online.target
-        After=etcd.service
-        Description=Creates Akka Cluster Configuration Directory
-        Requires=network-online.target
-        Requires=etcd.service
-
-        [Service]
-        Type=oneshot
-        RemainAfterExit=yes
-        ExecStartPre=-/usr/bin/etcdctl mkdir /akka.cluster.nodes
-        ExecStart=/bin/echo Created /akka.cluster.nodes etcd directory
 
 write_files:
   # File holding Docker login information

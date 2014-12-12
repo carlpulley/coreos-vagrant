@@ -1,9 +1,10 @@
 <%
-  @image          = @docker[:notification]
-  @description    = "Lift Microservice: Notification"
-  @roles          = "notification"
-  @ip_address     = "10.42.4.%i"
-  @affinity_rules = "MachineMetadata=lift=true"
+  @image                 = @docker[:notification]
+  @description           = "Lift Microservice: Notification"
+  @roles                 = "notification"
+  @ip_address            = "10.42.4.%i"
+  @service_discovery_key = @service_discovery[:akka]
+  @affinity_rules        = "MachineMetadata=lift=true"
 %>
 
 <%= ERB.new(File.read("unit-files/default-akka.erb"), 0, "<>", '_unit').result(binding) %>

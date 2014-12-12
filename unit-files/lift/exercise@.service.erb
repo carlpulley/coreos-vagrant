@@ -1,9 +1,10 @@
 <%
-  @image          = @docker[:exercise]
-  @description    = "Lift Microservice: Exercise"
-  @roles          = "exercise"
-  @ip_address     = "10.42.1.%i"
-  @affinity_rules = "MachineMetadata=lift=true"
+  @image                 = @docker[:exercise]
+  @description           = "Lift Microservice: Exercise"
+  @roles                 = "exercise"
+  @ip_address            = "10.42.1.%i"
+  @service_discovery_key = @service_discovery[:akka]
+  @affinity_rules        = "MachineMetadata=lift=true"
 %>
 
 <%= ERB.new(File.read("unit-files/default-akka.erb"), 0, "<>", '_unit').result(binding) %>

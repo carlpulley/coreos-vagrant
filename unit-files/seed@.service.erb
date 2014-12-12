@@ -1,7 +1,7 @@
 [Unit]
-After=akka-cluster-nodes.service
+After=etcd.service
 Description=Used to form a cluster from an initial seed node
-Requires=akka-cluster-nodes.service
+Requires=etcd.service
 
 [Service]
 Type=oneshot
@@ -9,5 +9,5 @@ RemainAfterExit=yes
 TimeoutSec=0
 
 # Ensure seed node exists
-ExecStartPre=/usr/bin/etcdctl get /akka.cluster.nodes/%i
-ExecStart=/usr/bin/etcdctl set /akka.cluster.nodes/%i Up
+ExecStartPre=/usr/bin/etcdctl get /<%= @service_discovery[:akka] %>/%i
+ExecStart=/usr/bin/etcdctl set /<%= @service_discovery[:akka] %>/%i Up

@@ -27,26 +27,28 @@ $update_channel='beta'
 $vb_memory = 2048 # 2GB
 #$vb_cpus = 1
 
+@application_name = "helloworld"
+
+@service_discovery = {
+  :akka      => "#{@application_name}/akka",
+  :cassandra => "#{@application_name}/cassandra"
+}
+
 # Docker images that our distributed application will use
 @docker = {
   :vulcand       => "mailgun/vulcand",
-  :cassandra     => "spotify/cassandra",
-  :app           => "carlpulley/helloworld:v0.1.0-SNAPSHOT"
-#  :exercise     => "carlpulley/lift:lift-exercise",
-#  :notification => "carlpulley/lift:lift-notification",
-#  :profile      => "carlpulley/lift:lift-profile"
+  :cassandra     => "spotify/cassandra"
 }
 
 # List of service templates that we want on each compute node
 @service_templates = [
   "vulcand.service",
-  "cassandra@.service",
-  "seed@.service",
-  "helloworld/app@.service"
-#  "lift/exercise@.service",
-#  "lift/notification@.service",
-#  "lift/profile@.service"
+  "cassandra.service",
+  "seed@.service"
 ]
+
+# Load in application specific docker images and service templates
+load "#{@application_name}.rb"
 
 # Authentication information for accessing the Docker repository
 @username='USERNAME'

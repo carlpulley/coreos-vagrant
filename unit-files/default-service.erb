@@ -13,21 +13,21 @@ TimeoutStartSec=0
 KillMode=none
 
 # Ensure our etcd registry is present
-ExecStartPre=-/usr/bin/etcdctl mkdir /%p
+ExecStartPre=-/usr/bin/etcdctl mkdir /<%= @service_discovery_key %>
 
 # Remove old docker containers with the same name if they exist
-ExecStartPre=-/usr/bin/docker kill %p-%i
-ExecStartPre=-/usr/bin/docker rm %p-%i
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm %p
 
 # Start the docker container with weave networking (we pass in the etcd URL via the environment)
 # NOTE: we need to use an IP address here as Akka will otherwise map the DNS name to the wrong NIC address!
-ExecStartPre=/usr/bin/etcdctl set /%p/<%= @ip_address %> %p-%i
-ExecStartPre=/usr/bin/sudo /opt/bin/weave run <%= @ip_address %>/16 --name %p-%i -h %p-%i.weave.local <%= @image %>
-ExecStart=/usr/bin/docker attach %p-%i
+ExecStartPre=/usr/bin/etcdctl set /<%= @service_discovery_key %>/<%= @ip_address %> %p
+ExecStartPre=/usr/bin/sudo /opt/bin/weave run <%= @ip_address %>/16 --name %p -h %p.weave.local -e "SERVICE_KEY=<%= @service_discovery_key %>" <%= @image %>
+ExecStart=/usr/bin/docker attach %p
 
 # When stopped, stop the docker container and deregister
-ExecStopPost=-/usr/bin/etcdctl rm /%p/<%= @ip_address %>
-ExecStop=/usr/bin/docker stop %p-%i
+ExecStopPost=-/usr/bin/etcdctl rm /<%= @service_discovery_key %>/<%= @ip_address %>
+ExecStop=/usr/bin/docker stop %p
 
 [X-Fleet]
 <%= @affinity_rules %>
