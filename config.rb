@@ -44,7 +44,7 @@ $vb_memory = 2048 # 2GB
 @service_templates = [
   "vulcand.service",
   "cassandra.service",
-  "seed@.service"
+  "seed.service"
 ]
 
 # Load in application specific docker images and service templates

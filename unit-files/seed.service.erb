@@ -1,0 +1,37 @@
+<%
+  seed_retry = 2 # seconds
+%>
+
+[Unit]
+After=etcd.service
+Description=Used to form a cluster from an initial seed node
+Requires=etcd.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+TimeoutSec=0
+
+# Wait until we can find at least one 'Joining' seed node
+ExecStartPre=/usr/bin/sh -c '\
+  WAITING=true; \
+  while $WAITING; do \
+    for service in `/usr/bin/etcdctl ls /<%= @service_discovery[:akka] %>`; do \
+      if [ $(/usr/bin/etcdctl get $service) == "Joining" ]; then \
+        WAITING=false; \
+        break; \
+      fi; \
+    done; \
+    /usr/bin/sleep <%= seed_retry %>; \
+  done'
+
+# Use first 'Joining' node to form or seed our Akka cluster
+ExecStart=/usr/bin/sh -c '\
+  for NODE in `/usr/bin/etcdctl ls /<%= @service_discovery[:akka] %>`; do \
+    if [ $(/usr/bin/etcdctl get $NODE) == "Joining" ]; then \
+      echo "Seeding cluster using $NODE"; \
+      /usr/bin/etcdctl set $NODE Up; \
+      break; \
+    fi; \
+  done'
+ 

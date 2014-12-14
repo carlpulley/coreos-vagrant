@@ -2,8 +2,7 @@
   @image = @docker[:vulcand]
   @logLevel = "INFO" # INFO, WARN or ERROR
   @ip_address = "10.42.253.253"
-  @port = 8080
-  @apiPort = 8182
+  @port = 8888
 %>
 
 [Unit]
@@ -26,9 +25,8 @@ ExecStartPre=/usr/bin/docker pull <%= @image %>
 
 ExecStartPre=/usr/bin/sudo /opt/bin/weave run <%= @ip_address %>/16 --name %p -h %p.weave.local \
   -p <%= @port %>:<%= @port %> \
-  -p <%= @apiPort %>:<%= @apiPort %> \
   <%= @image %> \
-  /go/bin/vulcand -apiInterface=0.0.0.0 -interface=0.0.0.0 -logSeverity=<%= @logLevel %> -etcd=http://${COREOS_PRIVATE_IPV4}:4001 -port=<%= @port %> -apiPort=<%= @apiPort %>
+  /go/bin/vulcand -interface=0.0.0.0 -logSeverity=<%= @logLevel %> -etcd=http://${COREOS_PRIVATE_IPV4}:4001 -port=<%= @port %>
 ExecStart=/usr/bin/docker attach %p
 
 ExecStop=/usr/bin/docker stop %p
