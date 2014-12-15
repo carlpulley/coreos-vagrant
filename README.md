@@ -1,4 +1,5 @@
 Basic setup:
+* edit `config.rb` and set `application_name` to be `"lift"`
 * launch two Lift nodes:
   * `INSTANCE=1,2 CLOUD_CONFIG=lift/akka METADATA="lift=true" vagrant up`
 * launch a Cassandra node:
@@ -18,15 +19,15 @@ Sanity checking compute nodes:
 
 Checking of Cassandra node:
 * boot a Cassandra container:
-  * `fleetctl start cassandra@1`
+  * `fleetctl start cassandra`
 * check status of Cassandra:
-  * `fleetctl status cassandra@1`
+  * `fleetctl status cassandra`
 * check that Cassandra booted correctly:
-  * `fleetctl journal cassandra@1`
+  * `fleetctl journal cassandra`
   * `journalctl` (for general service starting failures)
 * check Cassandra logging:
-  * `fleetctl ssh cassandra@1`
-  * `docker logs cassandra-1`
+  * `fleetctl ssh cassandra`
+  * `docker logs cassandra`
 
 Checking of Akka cluster nodes:
 * launch 1 notification, profile and exercise micro-service:
@@ -39,10 +40,8 @@ Checking of Akka cluster nodes:
   * `docker logs exercise-1`
 
 Cluster formation:
-* wait until cluster actor systems have registered:
-  * `etcdctl ls /akka.cluster.nodes` should return at least one member (e.g. /akka.cluster.nodes/10.42.0.1:45678)
-* specify an initial seed node (e.g. 10.42.0.1:45678) and form a cluster:
-  * `fleetctl start seed@10.42.0.1:45678`
+* seed and form a cluster:
+  * `fleetctl start seed`
 * verify cluster formation:
   * `fleetctl ssh exercise@1`
   * `docker logs exercise-1`
