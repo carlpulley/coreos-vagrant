@@ -27,7 +27,7 @@ $update_channel='beta'
 $vb_memory = 2048 # 2GB
 #$vb_cpus = 1
 
-@application_name = "helloworld"
+@application_name = "lift"
 
 @service_discovery = {
   :akka      => "#{@application_name}/akka",
