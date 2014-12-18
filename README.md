@@ -1,7 +1,6 @@
 Basic setup:
-* edit `config.rb` and set `application_name` to be `"lift"`
-* launch two Lift nodes:
-  * `INSTANCE=1,2 CLOUD_CONFIG=lift/akka METADATA="lift=true" vagrant up`
+* launch two 'Hello World' nodes:
+  * `INSTANCE=1,2 CLOUD_CONFIG=helloworld/akka METADATA="akka=true" vagrant up`
 * launch a Cassandra node:
   * `INSTANCE=3 CLOUD_CONFIG=cassandra METADATA="cassandra=true" vagrant up`
 
@@ -30,18 +29,18 @@ Checking of Cassandra node:
   * `docker logs cassandra`
 
 Checking of Akka cluster nodes:
-* launch 1 notification, profile and exercise micro-service:
-  * `fleetctl start notification@1 profile@1 exercise@1`
+* launch 3 'Hello World' micro-service:
+  * `fleetctl start app@{1..3}`
 * check that services have been launched:
   * `fleetctl list-units`
   * `fleetctl list-unit-files`
-* view Akka cluster logging for a container (e.g. exercise):
-  * `fleetctl ssh exercise@1`
-  * `docker logs exercise-1`
+* view Akka cluster logging for a container:
+  * `fleetctl ssh app@1`
+  * `docker logs app-1`
 
 Cluster formation:
 * seed and form a cluster:
   * `fleetctl start seed`
 * verify cluster formation:
-  * `fleetctl ssh exercise@1`
-  * `docker logs exercise-1`
+  * `fleetctl ssh app@1`
+  * `docker logs app-1`
