@@ -1,5 +1,4 @@
 Basic setup:
-* edit `config.rb` and set `application_name` to be `"lift"`
 * launch two Lift nodes:
   * `INSTANCE=1,2 CLOUD_CONFIG=lift/akka METADATA="lift=true" vagrant up`
 * launch a Cassandra node:
